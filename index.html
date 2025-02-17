@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gyroscope Sensor Demo</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .sensor-data {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .sensor-card {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+
+        .value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0066cc;
+            margin: 10px 0;
+        }
+
+        .label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .features {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .not-supported {
+            display: none;
+            color: #dc3545;
+            padding: 15px;
+            background-color: #fff3f3;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gyroscope Sensor Demo</h1>
+        
+        <div class="not-supported" id="not-supported">
+            ⚠️ Gyroscope sensors not supported on this device
+        </div>
+
+        <div class="sensor-data" id="example">
+            <div class="sensor-card">
+                <div class="label">X-Axis</div>
+                <div class="value">0</div>
+            </div>
+            <div class="sensor-card">
+                <div class="label">Y-Axis</div>
+                <div class="value">0</div>
+            </div>
+            <div class="sensor-card">
+                <div class="label">Z-Axis</div>
+                <div class="value">0</div>
+            </div>
+            <div class="sensor-card">
+                <div class="label">Alpha</div>
+                <div class="value">0</div>
+            </div>
+            <div class="sensor-card">
+                <div class="label">Beta</div>
+                <div class="value">0</div>
+            </div>
+            <div class="sensor-card">
+                <div class="label">Gamma</div>
+                <div class="value">0</div>
+            </div>
+        </div>
+
+        <div class="features">
+            <strong>Supported Features:</strong> <span id="features">Checking...</span>
+        </div>
+    </div>
+
+    <script>
+        (function(){function e(){window.addEventListener("MozOrientation",function(c){d.push("MozOrientation"),a.x=c.x-b.x,a.y=c.y-b.y,a.z=c.z-b.z},!0),window.addEventListener("devicemotion",function(c){d.push("devicemotion"),a.x=c.accelerationIncludingGravity.x-b.x,a.y=c.accelerationIncludingGravity.y-b.y,a.z=c.accelerationIncludingGravity.z-b.z},!0),window.addEventListener("deviceorientation",function(c){d.push("deviceorientation"),a.alpha=c.alpha-b.alpha,a.beta=c.beta-b.beta,a.gamma=c.gamma-b.gamma},!0)}var a={x:null,y:null,z:null,alpha:null,beta:null,gamma:null},b={x:0,y:0,z:0,alpha:0,beta:0,gamma:0},c=null,d=[];window.gyro={},gyro.frequency=500,gyro.calibrate=function(){for(var c in a)b[c]=typeof a[c]=="number"?a[c]:0},gyro.getOrientation=function(){return a},gyro.startTracking=function(b){c=setInterval(function(){b(a)},gyro.frequency)},gyro.stopTracking=function(){clearInterval(c)},gyro.hasFeature=function(a){for(var b in d)if(a==d[b])return!0;return!1},gyro.getFeatures=function(){return d},e()})(window);
+
+        // Start tracking gyroscope data
+        gyro.startTracking(function(o) {
+            // Update the values in the cards
+            updateValue('X-Axis', o.x);
+            updateValue('Y-Axis', o.y);
+            updateValue('Z-Axis', o.z);
+            updateValue('Alpha', o.alpha);
+            updateValue('Beta', o.beta);
+            updateValue('Gamma', o.gamma);
+            
+            // Update features list
+            document.getElementById('features').textContent = gyro.getFeatures().join(', ');
+            
+            // Show warning if no features are supported
+            const features = gyro.getFeatures();
+            document.getElementById('not-supported').style.display = 
+                features.length === 0 ? 'block' : 'none';
+        });
+
+        function updateValue(label, value) {
+            const cards = document.querySelectorAll('.sensor-card');
+            for (const card of cards) {
+                if (card.querySelector('.label').textContent === label) {
+                    card.querySelector('.value').textContent = 
+                        value ? value.toFixed(2) : '0.00';
+                }
+            }
+        }
+    </script>
+</body>
+</html>
