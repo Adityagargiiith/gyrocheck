@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gyroscope Bubble Sort</title>
+    <title>Advanced Gyroscope Bubble Sort</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -31,12 +31,13 @@
             height: 300px;
             margin: 20px 0;
             gap: 2px;
+            position: relative;
         }
 
         .array-bar {
             background-color: #0066cc;
             width: 30px;
-            transition: height 0.3s ease;
+            transition: height 0.3s ease, transform 0.3s ease;
         }
 
         .comparing {
@@ -52,6 +53,7 @@
             gap: 10px;
             margin-bottom: 20px;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
         button {
@@ -61,6 +63,11 @@
             background-color: #0066cc;
             color: white;
             cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        button:hover {
+            transform: scale(1.05);
         }
 
         button:disabled {
@@ -85,27 +92,71 @@
 
         .instructions {
             background-color: #e9ecef;
-            padding: 15px;
+            padding: 20px;
             border-radius: 8px;
             margin-top: 20px;
+        }
+
+        .instruction-step {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            border-left: 4px solid #0066cc;
+        }
+
+        .mode-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .shake-animation {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .status-message {
+            text-align: center;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #e3f2fd;
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Gyroscope Bubble Sort</h1>
+        <h1>Advanced Gyroscope Bubble Sort</h1>
         
         <div class="controls">
             <button id="resetBtn">Reset Array</button>
             <button id="startBtn">Start Sorting</button>
+            <button id="calibrateBtn">Calibrate Gyroscope</button>
         </div>
 
+        <div class="status-message" id="statusMessage"></div>
         <div class="array-container" id="arrayContainer"></div>
 
         <div class="sensor-data">
             <div class="sensor-card">
-                <div>Beta (Tilt)</div>
+                <div>Beta (Forward/Back)</div>
                 <div id="betaValue">0°</div>
+            </div>
+            <div class="sensor-card">
+                <div>Gamma (Left/Right)</div>
+                <div id="gammaValue">0°</div>
             </div>
             <div class="sensor-card">
                 <div>Sort Progress</div>
@@ -114,23 +165,56 @@
         </div>
 
         <div class="instructions">
-            <h3>How to Use:</h3>
-            <p>1. Press "Reset Array" to generate a new random array</p>
-            <p>2. Press "Start Sorting" to begin</p>
-            <p>3. Tilt your device forward/backward to control sorting speed</p>
-            <p>- Tilt forward to sort faster</p>
-            <p>- Hold level to pause</p>
-            <p>- Tilt backward to reverse</p>
+            <h3>📱 Advanced Gyroscope Controls</h3>
+            
+            <div class="instruction-step">
+                <strong>Initial Setup:</strong>
+                <ul>
+                    <li>Enable device orientation in your browser settings</li>
+                    <li>Hold your device in portrait orientation</li>
+                    <li>Click "Calibrate Gyroscope" to set neutral position</li>
+                </ul>
+            </div>
+
+            <div class="instruction-step">
+                <strong>Basic Controls:</strong>
+                <ul>
+                    <li>Forward Tilt (Beta > 10°): Sort forward</li>
+                    <li>Backward Tilt (Beta < -10°): Reverse sort</li>
+                    <li>Level Position (Beta ≈ 0°): Pause sorting</li>
+                </ul>
+            </div>
+
+            <div class="instruction-step">
+                <strong>Advanced Features:</strong>
+                <ul>
+                    <li>Left/Right Tilt (Gamma): Adjust sorting speed</li>
+                    <li>Sharp Device Shake: Generate new random array</li>
+                    <li>Hold completely flat: Auto-complete sorting</li>
+                </ul>
+            </div>
+
+            <div class="instruction-step">
+                <strong>Visual Feedback:</strong>
+                <ul>
+                    <li>Blue Bars: Unsorted elements</li>
+                    <li>Red Bars: Currently comparing elements</li>
+                    <li>Green Bars: Sorted elements</li>
+                    <li>Progress percentage shows completion status</li>
+                </ul>
+            </div>
         </div>
     </div>
+
+    <div class="mode-indicator" id="modeIndicator"></div>
 
     <script>
         // Gyroscope initialization code
         (function(){function e(){window.addEventListener("deviceorientation",function(c){d.push("deviceorientation"),a.alpha=c.alpha-b.alpha,a.beta=c.beta-b.beta,a.gamma=c.gamma-b.gamma},!0)}var a={alpha:null,beta:null,gamma:null},b={alpha:0,beta:0,gamma:0},c=null,d=[];window.gyro={},gyro.frequency=500,gyro.calibrate=function(){for(var c in a)b[c]=typeof a[c]=="number"?a[c]:0},gyro.getOrientation=function(){return a},gyro.startTracking=function(b){c=setInterval(function(){b(a)},gyro.frequency)},gyro.stopTracking=function(){clearInterval(c)},gyro.hasFeature=function(a){for(var b in d)if(a==d[b])return!0;return!1},gyro.getFeatures=function(){return d},e()})(window);
 
-        // Main application code
+        // Enhanced BubbleSort class with more features
         class BubbleSort {
-            constructor(size = 10) {
+            constructor(size = 15) {
                 this.array = [];
                 this.size = size;
                 this.currentIndex = 0;
@@ -149,50 +233,60 @@
                 this.sortedIndices.clear();
             }
 
-            step(direction = 1) {
+            step(direction = 1, speed = 1) {
                 if (this.sorted) return true;
 
-                if (direction === 1) {
-                    // Forward step
-                    if (this.array[this.currentIndex] > this.array[this.currentIndex + 1]) {
-                        [this.array[this.currentIndex], this.array[this.currentIndex + 1]] = 
-                        [this.array[this.currentIndex + 1], this.array[this.currentIndex]];
-                    }
-                    this.comparing = [this.currentIndex, this.currentIndex + 1];
-                    this.currentIndex++;
+                for (let i = 0; i < speed; i++) {
+                    if (direction === 1) {
+                        if (this.array[this.currentIndex] > this.array[this.currentIndex + 1]) {
+                            [this.array[this.currentIndex], this.array[this.currentIndex + 1]] = 
+                            [this.array[this.currentIndex + 1], this.array[this.currentIndex]];
+                        }
+                        this.comparing = [this.currentIndex, this.currentIndex + 1];
+                        this.currentIndex++;
 
-                    if (this.currentIndex >= this.array.length - this.sortedIndices.size - 1) {
-                        this.sortedIndices.add(this.array.length - this.sortedIndices.size - 1);
-                        this.currentIndex = 0;
-                        if (this.sortedIndices.size === this.array.length - 1) {
-                            this.sorted = true;
-                            this.sortedIndices.add(0);
+                        if (this.currentIndex >= this.array.length - this.sortedIndices.size - 1) {
+                            this.sortedIndices.add(this.array.length - this.sortedIndices.size - 1);
+                            this.currentIndex = 0;
+                            if (this.sortedIndices.size === this.array.length - 1) {
+                                this.sorted = true;
+                                this.sortedIndices.add(0);
+                            }
                         }
-                    }
-                } else {
-                    // Backward step
-                    if (this.currentIndex === 0) {
-                        if (this.sortedIndices.size > 0) {
-                            this.sortedIndices.delete(this.array.length - this.sortedIndices.size);
-                        }
-                        this.currentIndex = this.array.length - this.sortedIndices.size - 2;
                     } else {
-                        this.currentIndex--;
+                        if (this.currentIndex === 0) {
+                            if (this.sortedIndices.size > 0) {
+                                this.sortedIndices.delete(this.array.length - this.sortedIndices.size);
+                            }
+                            this.currentIndex = this.array.length - this.sortedIndices.size - 2;
+                        } else {
+                            this.currentIndex--;
+                        }
+                        this.comparing = [this.currentIndex, this.currentIndex + 1];
                     }
-                    this.comparing = [this.currentIndex, this.currentIndex + 1];
                 }
 
                 return this.sorted;
             }
+
+            completeSort() {
+                while (!this.sorted) {
+                    this.step(1, 5);
+                }
+                return true;
+            }
         }
 
-        // UI Controller
+        // Enhanced UI Controller
         class SortingVisualizer {
             constructor() {
                 this.sorter = new BubbleSort(15);
                 this.isRunning = false;
+                this.calibrationOffset = { beta: 0, gamma: 0 };
+                this.lastShakeTime = 0;
                 this.setupDOM();
                 this.setupGyroscope();
+                this.setupShakeDetection();
                 this.render();
             }
 
@@ -200,25 +294,88 @@
                 this.container = document.getElementById('arrayContainer');
                 this.resetBtn = document.getElementById('resetBtn');
                 this.startBtn = document.getElementById('startBtn');
+                this.calibrateBtn = document.getElementById('calibrateBtn');
                 this.betaDisplay = document.getElementById('betaValue');
+                this.gammaDisplay = document.getElementById('gammaValue');
                 this.progressDisplay = document.getElementById('progressValue');
+                this.modeIndicator = document.getElementById('modeIndicator');
+                this.statusMessage = document.getElementById('statusMessage');
 
                 this.resetBtn.addEventListener('click', () => this.reset());
                 this.startBtn.addEventListener('click', () => this.toggleSort());
+                this.calibrateBtn.addEventListener('click', () => this.calibrate());
+            }
+
+            showStatus(message, duration = 2000) {
+                this.statusMessage.textContent = message;
+                this.statusMessage.style.display = 'block';
+                setTimeout(() => {
+                    this.statusMessage.style.display = 'none';
+                }, duration);
+            }
+
+            setupShakeDetection() {
+                let lastX = 0, lastY = 0, lastZ = 0;
+                const shakeThreshold = 15;
+
+                window.addEventListener('devicemotion', (event) => {
+                    const acceleration = event.accelerationIncludingGravity;
+                    if (!acceleration) return;
+
+                    const deltaX = Math.abs(acceleration.x - lastX);
+                    const deltaY = Math.abs(acceleration.y - lastY);
+                    const deltaZ = Math.abs(acceleration.z - lastZ);
+
+                    if (deltaX + deltaY + deltaZ > shakeThreshold) {
+                        const now = Date.now();
+                        if (now - this.lastShakeTime > 1000) {
+                            this.lastShakeTime = now;
+                            this.reset();
+                            this.showStatus('🎲 New random array generated!');
+                        }
+                    }
+
+                    lastX = acceleration.x;
+                    lastY = acceleration.y;
+                    lastZ = acceleration.z;
+                });
+            }
+
+            calibrate() {
+                this.showStatus('🎯 Calibrating gyroscope...');
+                gyro.calibrate();
+                this.calibrationOffset = { 
+                    beta: gyro.getOrientation().beta || 0,
+                    gamma: gyro.getOrientation().gamma || 0
+                };
             }
 
             setupGyroscope() {
                 gyro.startTracking((orientation) => {
                     if (this.isRunning) {
-                        const beta = orientation.beta || 0;
-                        this.betaDisplay.textContent = `${beta.toFixed(1)}°`;
+                        const beta = (orientation.beta || 0) - this.calibrationOffset.beta;
+                        const gamma = (orientation.gamma || 0) - this.calibrationOffset.gamma;
                         
-                        if (Math.abs(beta) > 5) {
+                        this.betaDisplay.textContent = `${beta.toFixed(1)}°`;
+                        this.gammaDisplay.textContent = `${gamma.toFixed(1)}°`;
+
+                        // Check for auto-complete (device completely flat)
+                        if (Math.abs(beta) < 5 && Math.abs(gamma) < 5) {
+                            this.sorter.completeSort();
+                            this.render();
+                            this.stop();
+                            return;
+                        }
+
+                        if (Math.abs(beta) > 10) {
                             const direction = beta > 0 ? 1 : -1;
-                            const speed = Math.min(Math.abs(beta) / 10, 30);
+                            const baseSpeed = Math.min(Math.abs(beta) / 10, 30);
+                            const gammaMultiplier = Math.abs(gamma) / 45 + 1; // Speed multiplier based on left/right tilt
+                            const speed = baseSpeed * gammaMultiplier;
+
                             setTimeout(() => {
                                 if (this.isRunning) {
-                                    const done = this.sorter.step(direction);
+                                    const done = this.sorter.step(direction, Math.floor(speed / 10) + 1);
                                     if (done) this.stop();
                                     this.render();
                                 }
@@ -233,17 +390,22 @@
                 this.render();
                 this.isRunning = false;
                 this.startBtn.textContent = 'Start Sorting';
+                this.startBtn.disabled = false;
+                this.container.classList.add('shake-animation');
+                setTimeout(() => this.container.classList.remove('shake-animation'), 500);
             }
 
             toggleSort() {
                 this.isRunning = !this.isRunning;
                 this.startBtn.textContent = this.isRunning ? 'Pause Sorting' : 'Resume Sorting';
+                this.showStatus(this.isRunning ? '▶️ Sorting started' : '⏸️ Sorting paused');
             }
 
-            stop() {
+         stop() {
                 this.isRunning = false;
                 this.startBtn.textContent = 'Sorting Complete';
                 this.startBtn.disabled = true;
+                this.showStatus('✅ Sorting completed!');
             }
 
             render() {
@@ -258,21 +420,75 @@
                     
                     if (this.sorter.comparing.includes(index)) {
                         bar.classList.add('comparing');
+                        bar.style.transform = 'scale(1.1)';
                     }
                     if (this.sorter.sortedIndices.has(index)) {
                         bar.classList.add('sorted');
                     }
                     
+                    // Add tooltip showing the value
+                    bar.title = `Value: ${value}`;
                     this.container.appendChild(bar);
                 });
 
                 const progress = (this.sorter.sortedIndices.size / this.sorter.array.length) * 100;
                 this.progressDisplay.textContent = `${progress.toFixed(1)}%`;
+
+                // Update mode indicator based on device orientation
+                const orientation = gyro.getOrientation();
+                const beta = (orientation.beta || 0) - this.calibrationOffset.beta;
+                const gamma = (orientation.gamma || 0) - this.calibrationOffset.gamma;
+
+                let modeText = '';
+                if (Math.abs(beta) < 5 && Math.abs(gamma) < 5) {
+                    modeText = '🚀 Auto-Complete Mode';
+                } else if (Math.abs(beta) > 10) {
+                    modeText = beta > 0 ? '⏩ Forward Sorting' : '⏪ Reverse Sorting';
+                    if (Math.abs(gamma) > 15) {
+                        modeText += ' (Speed Boost)';
+                    }
+                } else {
+                    modeText = '⏸️ Paused';
+                }
+
+                this.modeIndicator.textContent = modeText;
+                this.modeIndicator.style.display = this.isRunning ? 'block' : 'none';
             }
         }
 
-        // Initialize the application
-        new SortingVisualizer();
+        // Check for gyroscope support
+        if (window.DeviceOrientationEvent) {
+            // Initialize the application
+            const visualizer = new SortingVisualizer();
+
+            // Add keyboard controls for desktop testing
+            document.addEventListener('keydown', (event) => {
+                if (!visualizer.isRunning) return;
+
+                switch(event.key) {
+                    case 'ArrowUp':
+                        visualizer.sorter.step(1);
+                        visualizer.render();
+                        break;
+                    case 'ArrowDown':
+                        visualizer.sorter.step(-1);
+                        visualizer.render();
+                        break;
+                    case 'Space':
+                        visualizer.sorter.completeSort();
+                        visualizer.render();
+                        visualizer.stop();
+                        break;
+                }
+            });
+        } else {
+            document.body.innerHTML = `
+                <div style="text-align: center; padding: 20px; color: red;">
+                    ⚠️ Device orientation not supported on this device/browser.
+                    <br>Please use a device with gyroscope support.
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>
