@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Gyroscope Bubble Sort</title>
+    <title>Advanced Gyroscope Bubble Sort</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -38,12 +38,10 @@
             background-color: #0066cc;
             width: 30px;
             transition: height 0.3s ease, transform 0.3s ease;
-            position: relative;
         }
 
         .comparing {
             background-color: #ff4444;
-            transform: scale(1.1);
         }
 
         .sorted {
@@ -77,56 +75,19 @@
             cursor: not-allowed;
         }
 
-        .metrics-panel {
+        .sensor-data {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 10px;
             margin-top: 20px;
+        }
+
+        .sensor-card {
             background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-        }
-
-        .metric-card {
-            text-align: center;
             padding: 10px;
-            background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .metric-value {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #0066cc;
-            margin-top: 5px;
-        }
-
-        .speed-indicator {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 15px;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
             border-radius: 8px;
-            font-size: 1.2em;
-            z-index: 1000;
-        }
-
-        .speed-gauge {
-            width: 150px;
-            height: 10px;
-            background-color: #ddd;
-            border-radius: 5px;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-
-        .speed-gauge-fill {
-            height: 100%;
-            background-color: #4CAF50;
-            transition: width 0.3s ease;
+            border: 1px solid #dee2e6;
+            text-align: center;
         }
 
         .instructions {
@@ -144,14 +105,25 @@
             border-left: 4px solid #0066cc;
         }
 
-        @keyframes swap {
-            0% { transform: translateY(0) scale(1.1); }
-            50% { transform: translateY(-10px) scale(1.1); }
-            100% { transform: translateY(0) scale(1.1); }
+        .mode-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 5px;
+            display: none;
         }
 
-        .swapping {
-            animation: swap 0.3s ease;
+        .shake-animation {
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
 
         .status-message {
@@ -166,7 +138,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Enhanced Gyroscope Bubble Sort</h1>
+        <h1>Advanced Gyroscope Bubble Sort</h1>
         
         <div class="controls">
             <button id="resetBtn">Reset Array</button>
@@ -177,59 +149,69 @@
         <div class="status-message" id="statusMessage"></div>
         <div class="array-container" id="arrayContainer"></div>
 
-        <div class="metrics-panel">
-            <div class="metric-card">
-                <div>Speed</div>
-                <div id="speedValue" class="metric-value">0x</div>
+        <div class="sensor-data">
+            <div class="sensor-card">
+                <div>Beta (Forward/Back)</div>
+                <div id="betaValue">0°</div>
             </div>
-            <div class="metric-card">
-                <div>Comparisons</div>
-                <div id="comparisonsValue" class="metric-value">0</div>
+            <div class="sensor-card">
+                <div>Gamma (Left/Right)</div>
+                <div id="gammaValue">0°</div>
             </div>
-            <div class="metric-card">
-                <div>Swaps</div>
-                <div id="swapsValue" class="metric-value">0</div>
-            </div>
-            <div class="metric-card">
-                <div>Progress</div>
-                <div id="progressValue" class="metric-value">0%</div>
+            <div class="sensor-card">
+                <div>Sort Progress</div>
+                <div id="progressValue">0%</div>
             </div>
         </div>
 
         <div class="instructions">
-            <h3>📱 Gyroscope Controls</h3>
+            <h3>📱 Advanced Gyroscope Controls</h3>
             
             <div class="instruction-step">
                 <strong>Initial Setup:</strong>
                 <ul>
-                    <li>Click "Calibrate Gyroscope" to set neutral position</li>
+                    <li>Enable device orientation in your browser settings</li>
                     <li>Hold your device in portrait orientation</li>
+                    <li>Click "Calibrate Gyroscope" to set neutral position</li>
                 </ul>
             </div>
 
             <div class="instruction-step">
-                <strong>Sorting Controls:</strong>
+                <strong>Basic Controls:</strong>
                 <ul>
-                    <li>Forward Tilt: Sort forward</li>
-                    <li>Backward Tilt: Reverse sort</li>
-                    <li>Left/Right Tilt: Control speed (1x - 5x)</li>
-                    <li>Level Position: Pause sorting</li>
+                    <li>Forward Tilt (Beta > 10°): Sort forward</li>
+                    <li>Backward Tilt (Beta < -10°): Reverse sort</li>
+                    <li>Level Position (Beta ≈ 0°): Pause sorting</li>
+                </ul>
+            </div>
+
+            <div class="instruction-step">
+                <strong>Advanced Features:</strong>
+                <ul>
+                    <li>Left/Right Tilt (Gamma): Adjust sorting speed</li>
+                    <li>Sharp Device Shake: Generate new random array</li>
+                </ul>
+            </div>
+
+            <div class="instruction-step">
+                <strong>Visual Feedback:</strong>
+                <ul>
+                    <li>Blue Bars: Unsorted elements</li>
+                    <li>Red Bars: Currently comparing elements</li>
+                    <li>Green Bars: Sorted elements</li>
+                    <li>Progress percentage shows completion status</li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <div class="speed-indicator" id="speedIndicator">
-        Speed Control
-        <div class="speed-gauge">
-            <div class="speed-gauge-fill" id="speedGauge"></div>
-        </div>
-    </div>
+    <div class="mode-indicator" id="modeIndicator"></div>
 
     <script>
-        // Gyroscope initialization
+        // Gyroscope initialization code
         (function(){function e(){window.addEventListener("deviceorientation",function(c){d.push("deviceorientation"),a.alpha=c.alpha-b.alpha,a.beta=c.beta-b.beta,a.gamma=c.gamma-b.gamma},!0)}var a={alpha:null,beta:null,gamma:null},b={alpha:0,beta:0,gamma:0},c=null,d=[];window.gyro={},gyro.frequency=500,gyro.calibrate=function(){for(var c in a)b[c]=typeof a[c]=="number"?a[c]:0},gyro.getOrientation=function(){return a},gyro.startTracking=function(b){c=setInterval(function(){b(a)},gyro.frequency)},gyro.stopTracking=function(){clearInterval(c)},gyro.hasFeature=function(a){for(var b in d)if(a==d[b])return!0;return!1},gyro.getFeatures=function(){return d},e()})(window);
 
+        // Enhanced BubbleSort class with more features
         class BubbleSort {
             constructor(size = 15) {
                 this.array = [];
@@ -238,8 +220,6 @@
                 this.sorted = false;
                 this.comparing = [-1, -1];
                 this.sortedIndices = new Set();
-                this.comparisons = 0;
-                this.swaps = 0;
                 this.initialize();
             }
 
@@ -250,20 +230,16 @@
                 this.sorted = false;
                 this.comparing = [-1, -1];
                 this.sortedIndices.clear();
-                this.comparisons = 0;
-                this.swaps = 0;
             }
 
             step(direction = 1, speed = 1) {
                 if (this.sorted) return true;
 
                 for (let i = 0; i < speed; i++) {
-                    this.comparisons++;
                     if (direction === 1) {
                         if (this.array[this.currentIndex] > this.array[this.currentIndex + 1]) {
                             [this.array[this.currentIndex], this.array[this.currentIndex + 1]] = 
                             [this.array[this.currentIndex + 1], this.array[this.currentIndex]];
-                            this.swaps++;
                         }
                         this.comparing = [this.currentIndex, this.currentIndex + 1];
                         this.currentIndex++;
@@ -293,14 +269,16 @@
             }
         }
 
+        // Enhanced UI Controller
         class SortingVisualizer {
             constructor() {
                 this.sorter = new BubbleSort(15);
                 this.isRunning = false;
                 this.calibrationOffset = { beta: 0, gamma: 0 };
-                this.currentSpeed = 1;
+                this.lastShakeTime = 0;
                 this.setupDOM();
                 this.setupGyroscope();
+                this.setupShakeDetection();
                 this.render();
             }
 
@@ -309,11 +287,10 @@
                 this.resetBtn = document.getElementById('resetBtn');
                 this.startBtn = document.getElementById('startBtn');
                 this.calibrateBtn = document.getElementById('calibrateBtn');
-                this.speedValue = document.getElementById('speedValue');
-                this.comparisonsValue = document.getElementById('comparisonsValue');
-                this.swapsValue = document.getElementById('swapsValue');
-                this.progressValue = document.getElementById('progressValue');
-                this.speedGauge = document.getElementById('speedGauge');
+                this.betaDisplay = document.getElementById('betaValue');
+                this.gammaDisplay = document.getElementById('gammaValue');
+                this.progressDisplay = document.getElementById('progressValue');
+                this.modeIndicator = document.getElementById('modeIndicator');
                 this.statusMessage = document.getElementById('statusMessage');
 
                 this.resetBtn.addEventListener('click', () => this.reset());
@@ -327,6 +304,33 @@
                 setTimeout(() => {
                     this.statusMessage.style.display = 'none';
                 }, duration);
+            }
+
+            setupShakeDetection() {
+                let lastX = 0, lastY = 0, lastZ = 0;
+                const shakeThreshold = 15;
+
+                window.addEventListener('devicemotion', (event) => {
+                    const acceleration = event.accelerationIncludingGravity;
+                    if (!acceleration) return;
+
+                    const deltaX = Math.abs(acceleration.x - lastX);
+                    const deltaY = Math.abs(acceleration.y - lastY);
+                    const deltaZ = Math.abs(acceleration.z - lastZ);
+
+                    if (deltaX + deltaY + deltaZ > shakeThreshold) {
+                        const now = Date.now();
+                        if (now - this.lastShakeTime > 1000) {
+                            this.lastShakeTime = now;
+                            this.reset();
+                            this.showStatus('🎲 New random array generated!');
+                        }
+                    }
+
+                    lastX = acceleration.x;
+                    lastY = acceleration.y;
+                    lastZ = acceleration.z;
+                });
             }
 
             calibrate() {
@@ -344,20 +348,22 @@
                         const beta = (orientation.beta || 0) - this.calibrationOffset.beta;
                         const gamma = (orientation.gamma || 0) - this.calibrationOffset.gamma;
                         
-                        // Speed control based on left/right tilt (gamma)
-                        this.currentSpeed = Math.min(Math.max(Math.abs(gamma) / 15, 1), 5);
-                        this.speedValue.textContent = `${this.currentSpeed.toFixed(1)}x`;
-                        this.speedGauge.style.width = `${(this.currentSpeed / 5) * 100}%`;
+                        this.betaDisplay.textContent = `${beta.toFixed(1)}°`;
+                        this.gammaDisplay.textContent = `${gamma.toFixed(1)}°`;
 
                         if (Math.abs(beta) > 10) {
                             const direction = beta > 0 ? 1 : -1;
+                            const baseSpeed = Math.min(Math.abs(beta) / 10, 30);
+                            const gammaMultiplier = Math.abs(gamma) / 45 + 1; // Speed multiplier based on left/right tilt
+                            const speed = baseSpeed * gammaMultiplier;
+
                             setTimeout(() => {
                                 if (this.isRunning) {
-                                    const done = this.sorter.step(direction, Math.floor(this.currentSpeed));
+                                    const done = this.sorter.step(direction, Math.floor(speed / 10) + 1);
                                     if (done) this.stop();
                                     this.render();
                                 }
-                            }, 1000 / (this.currentSpeed * 10));
+                            }, 1000 / speed);
                         }
                     }
                 });
@@ -369,7 +375,8 @@
                 this.isRunning = false;
                 this.startBtn.textContent = 'Start Sorting';
                 this.startBtn.disabled = false;
-                this.showStatus('🔄 Array reset');
+                this.container.classList.add('shake-animation');
+                setTimeout(() => this.container.classList.remove('shake-animation'), 500);
             }
 
             toggleSort() {
@@ -385,7 +392,7 @@
                 this.showStatus('✅ Sorting completed!');
             }
 
-           render() {
+       render() {
                 this.container.innerHTML = '';
                 const maxHeight = 250;
                 const maxValue = Math.max(...this.sorter.array);
@@ -397,38 +404,43 @@
                     
                     if (this.sorter.comparing.includes(index)) {
                         bar.classList.add('comparing');
-                        if (this.sorter.array[this.sorter.comparing[0]] > 
-                            this.sorter.array[this.sorter.comparing[1]]) {
-                            bar.classList.add('swapping');
-                        }
+                        bar.style.transform = 'scale(1.1)';
                     }
                     if (this.sorter.sortedIndices.has(index)) {
                         bar.classList.add('sorted');
                     }
                     
-                    // Add value label on top of the bar
-                    const label = document.createElement('div');
-                    label.style.position = 'absolute';
-                    label.style.top = '-20px';
-                    label.style.width = '100%';
-                    label.style.textAlign = 'center';
-                    label.style.fontSize = '12px';
-                    label.textContent = value;
-                    bar.appendChild(label);
-                    
+                    // Add tooltip showing the value
+                    bar.title = `Value: ${value}`;
                     this.container.appendChild(bar);
                 });
 
-                // Update metrics
                 const progress = (this.sorter.sortedIndices.size / this.sorter.array.length) * 100;
-                this.progressValue.textContent = `${progress.toFixed(1)}%`;
-                this.comparisonsValue.textContent = this.sorter.comparisons;
-                this.swapsValue.textContent = this.sorter.swaps;
+                this.progressDisplay.textContent = `${progress.toFixed(1)}%`;
+
+                // Update mode indicator based on device orientation
+                const orientation = gyro.getOrientation();
+                const beta = (orientation.beta || 0) - this.calibrationOffset.beta;
+                const gamma = (orientation.gamma || 0) - this.calibrationOffset.gamma;
+
+                let modeText = '';
+                if (Math.abs(beta) > 10) {
+                    modeText = beta > 0 ? '⏩ Forward Sorting' : '⏪ Reverse Sorting';
+                    if (Math.abs(gamma) > 15) {
+                        modeText += ' (Speed Boost)';
+                    }
+                } else {
+                    modeText = '⏸️ Paused';
+                }
+
+                this.modeIndicator.textContent = modeText;
+                this.modeIndicator.style.display = this.isRunning ? 'block' : 'none';
             }
         }
 
-        // Check for gyroscope support and initialize
+        // Check for gyroscope support
         if (window.DeviceOrientationEvent) {
+            // Initialize the application
             const visualizer = new SortingVisualizer();
 
             // Add keyboard controls for desktop testing
@@ -443,16 +455,6 @@
                     case 'ArrowDown':
                         visualizer.sorter.step(-1);
                         visualizer.render();
-                        break;
-                    case 'ArrowLeft':
-                        visualizer.currentSpeed = Math.max(1, visualizer.currentSpeed - 0.5);
-                        visualizer.speedValue.textContent = `${visualizer.currentSpeed.toFixed(1)}x`;
-                        visualizer.speedGauge.style.width = `${(visualizer.currentSpeed / 5) * 100}%`;
-                        break;
-                    case 'ArrowRight':
-                        visualizer.currentSpeed = Math.min(5, visualizer.currentSpeed + 0.5);
-                        visualizer.speedValue.textContent = `${visualizer.currentSpeed.toFixed(1)}x`;
-                        visualizer.speedGauge.style.width = `${(visualizer.currentSpeed / 5) * 100}%`;
                         break;
                 }
             });
