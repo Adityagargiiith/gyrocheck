@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gyroscope Sensor Demo</title>
+    <title>Gyroscope Bubble Sort</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
+            margin: 0;
             padding: 20px;
             background-color: #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         .container {
@@ -18,51 +20,72 @@
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 800px;
+        }
+
+        .array-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 300px;
+            margin: 20px 0;
+            gap: 2px;
+        }
+
+        .array-bar {
+            background-color: #0066cc;
+            width: 30px;
+            transition: height 0.3s ease;
+        }
+
+        .comparing {
+            background-color: #ff4444;
+        }
+
+        .sorted {
+            background-color: #00cc66;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #0066cc;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
         }
 
         .sensor-data {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
             margin-top: 20px;
         }
 
         .sensor-card {
             background-color: #f8f9fa;
-            padding: 15px;
+            padding: 10px;
             border-radius: 8px;
             border: 1px solid #dee2e6;
+            text-align: center;
         }
 
-        .value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #0066cc;
-            margin: 10px 0;
-        }
-
-        .label {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .features {
-            margin-top: 20px;
-            padding: 15px;
+        .instructions {
             background-color: #e9ecef;
-            border-radius: 8px;
-        }
-
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .not-supported {
-            display: none;
-            color: #dc3545;
             padding: 15px;
-            background-color: #fff3f3;
             border-radius: 8px;
             margin-top: 20px;
         }
@@ -70,75 +93,186 @@
 </head>
 <body>
     <div class="container">
-        <h1>Gyroscope Sensor Demo</h1>
+        <h1>Gyroscope Bubble Sort</h1>
         
-        <div class="not-supported" id="not-supported">
-            ⚠️ Gyroscope sensors not supported on this device
+        <div class="controls">
+            <button id="resetBtn">Reset Array</button>
+            <button id="startBtn">Start Sorting</button>
         </div>
 
-        <div class="sensor-data" id="example">
+        <div class="array-container" id="arrayContainer"></div>
+
+        <div class="sensor-data">
             <div class="sensor-card">
-                <div class="label">X-Axis</div>
-                <div class="value">0</div>
+                <div>Beta (Tilt)</div>
+                <div id="betaValue">0°</div>
             </div>
             <div class="sensor-card">
-                <div class="label">Y-Axis</div>
-                <div class="value">0</div>
-            </div>
-            <div class="sensor-card">
-                <div class="label">Z-Axis</div>
-                <div class="value">0</div>
-            </div>
-            <div class="sensor-card">
-                <div class="label">Alpha</div>
-                <div class="value">0</div>
-            </div>
-            <div class="sensor-card">
-                <div class="label">Beta</div>
-                <div class="value">0</div>
-            </div>
-            <div class="sensor-card">
-                <div class="label">Gamma</div>
-                <div class="value">0</div>
+                <div>Sort Progress</div>
+                <div id="progressValue">0%</div>
             </div>
         </div>
 
-        <div class="features">
-            <strong>Supported Features:</strong> <span id="features">Checking...</span>
+        <div class="instructions">
+            <h3>How to Use:</h3>
+            <p>1. Press "Reset Array" to generate a new random array</p>
+            <p>2. Press "Start Sorting" to begin</p>
+            <p>3. Tilt your device forward/backward to control sorting speed</p>
+            <p>- Tilt forward to sort faster</p>
+            <p>- Hold level to pause</p>
+            <p>- Tilt backward to reverse</p>
         </div>
     </div>
 
     <script>
-        (function(){function e(){window.addEventListener("MozOrientation",function(c){d.push("MozOrientation"),a.x=c.x-b.x,a.y=c.y-b.y,a.z=c.z-b.z},!0),window.addEventListener("devicemotion",function(c){d.push("devicemotion"),a.x=c.accelerationIncludingGravity.x-b.x,a.y=c.accelerationIncludingGravity.y-b.y,a.z=c.accelerationIncludingGravity.z-b.z},!0),window.addEventListener("deviceorientation",function(c){d.push("deviceorientation"),a.alpha=c.alpha-b.alpha,a.beta=c.beta-b.beta,a.gamma=c.gamma-b.gamma},!0)}var a={x:null,y:null,z:null,alpha:null,beta:null,gamma:null},b={x:0,y:0,z:0,alpha:0,beta:0,gamma:0},c=null,d=[];window.gyro={},gyro.frequency=500,gyro.calibrate=function(){for(var c in a)b[c]=typeof a[c]=="number"?a[c]:0},gyro.getOrientation=function(){return a},gyro.startTracking=function(b){c=setInterval(function(){b(a)},gyro.frequency)},gyro.stopTracking=function(){clearInterval(c)},gyro.hasFeature=function(a){for(var b in d)if(a==d[b])return!0;return!1},gyro.getFeatures=function(){return d},e()})(window);
+        // Gyroscope initialization code
+        (function(){function e(){window.addEventListener("deviceorientation",function(c){d.push("deviceorientation"),a.alpha=c.alpha-b.alpha,a.beta=c.beta-b.beta,a.gamma=c.gamma-b.gamma},!0)}var a={alpha:null,beta:null,gamma:null},b={alpha:0,beta:0,gamma:0},c=null,d=[];window.gyro={},gyro.frequency=500,gyro.calibrate=function(){for(var c in a)b[c]=typeof a[c]=="number"?a[c]:0},gyro.getOrientation=function(){return a},gyro.startTracking=function(b){c=setInterval(function(){b(a)},gyro.frequency)},gyro.stopTracking=function(){clearInterval(c)},gyro.hasFeature=function(a){for(var b in d)if(a==d[b])return!0;return!1},gyro.getFeatures=function(){return d},e()})(window);
 
-        // Start tracking gyroscope data
-        gyro.startTracking(function(o) {
-            // Update the values in the cards
-            updateValue('X-Axis', o.x);
-            updateValue('Y-Axis', o.y);
-            updateValue('Z-Axis', o.z);
-            updateValue('Alpha', o.alpha);
-            updateValue('Beta', o.beta);
-            updateValue('Gamma', o.gamma);
-            
-            // Update features list
-            document.getElementById('features').textContent = gyro.getFeatures().join(', ');
-            
-            // Show warning if no features are supported
-            const features = gyro.getFeatures();
-            document.getElementById('not-supported').style.display = 
-                features.length === 0 ? 'block' : 'none';
-        });
+        // Main application code
+        class BubbleSort {
+            constructor(size = 10) {
+                this.array = [];
+                this.size = size;
+                this.currentIndex = 0;
+                this.sorted = false;
+                this.comparing = [-1, -1];
+                this.sortedIndices = new Set();
+                this.initialize();
+            }
 
-        function updateValue(label, value) {
-            const cards = document.querySelectorAll('.sensor-card');
-            for (const card of cards) {
-                if (card.querySelector('.label').textContent === label) {
-                    card.querySelector('.value').textContent = 
-                        value ? value.toFixed(2) : '0.00';
+            initialize() {
+                this.array = Array.from({length: this.size}, () => 
+                    Math.floor(Math.random() * 100) + 1);
+                this.currentIndex = 0;
+                this.sorted = false;
+                this.comparing = [-1, -1];
+                this.sortedIndices.clear();
+            }
+
+            step(direction = 1) {
+                if (this.sorted) return true;
+
+                if (direction === 1) {
+                    // Forward step
+                    if (this.array[this.currentIndex] > this.array[this.currentIndex + 1]) {
+                        [this.array[this.currentIndex], this.array[this.currentIndex + 1]] = 
+                        [this.array[this.currentIndex + 1], this.array[this.currentIndex]];
+                    }
+                    this.comparing = [this.currentIndex, this.currentIndex + 1];
+                    this.currentIndex++;
+
+                    if (this.currentIndex >= this.array.length - this.sortedIndices.size - 1) {
+                        this.sortedIndices.add(this.array.length - this.sortedIndices.size - 1);
+                        this.currentIndex = 0;
+                        if (this.sortedIndices.size === this.array.length - 1) {
+                            this.sorted = true;
+                            this.sortedIndices.add(0);
+                        }
+                    }
+                } else {
+                    // Backward step
+                    if (this.currentIndex === 0) {
+                        if (this.sortedIndices.size > 0) {
+                            this.sortedIndices.delete(this.array.length - this.sortedIndices.size);
+                        }
+                        this.currentIndex = this.array.length - this.sortedIndices.size - 2;
+                    } else {
+                        this.currentIndex--;
+                    }
+                    this.comparing = [this.currentIndex, this.currentIndex + 1];
                 }
+
+                return this.sorted;
             }
         }
+
+        // UI Controller
+        class SortingVisualizer {
+            constructor() {
+                this.sorter = new BubbleSort(15);
+                this.isRunning = false;
+                this.setupDOM();
+                this.setupGyroscope();
+                this.render();
+            }
+
+            setupDOM() {
+                this.container = document.getElementById('arrayContainer');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.startBtn = document.getElementById('startBtn');
+                this.betaDisplay = document.getElementById('betaValue');
+                this.progressDisplay = document.getElementById('progressValue');
+
+                this.resetBtn.addEventListener('click', () => this.reset());
+                this.startBtn.addEventListener('click', () => this.toggleSort());
+            }
+
+            setupGyroscope() {
+                gyro.startTracking((orientation) => {
+                    if (this.isRunning) {
+                        const beta = orientation.beta || 0;
+                        this.betaDisplay.textContent = `${beta.toFixed(1)}°`;
+                        
+                        if (Math.abs(beta) > 5) {
+                            const direction = beta > 0 ? 1 : -1;
+                            const speed = Math.min(Math.abs(beta) / 10, 30);
+                            setTimeout(() => {
+                                if (this.isRunning) {
+                                    const done = this.sorter.step(direction);
+                                    if (done) this.stop();
+                                    this.render();
+                                }
+                            }, 1000 / speed);
+                        }
+                    }
+                });
+            }
+
+            reset() {
+                this.sorter.initialize();
+                this.render();
+                this.isRunning = false;
+                this.startBtn.textContent = 'Start Sorting';
+            }
+
+            toggleSort() {
+                this.isRunning = !this.isRunning;
+                this.startBtn.textContent = this.isRunning ? 'Pause Sorting' : 'Resume Sorting';
+            }
+
+            stop() {
+                this.isRunning = false;
+                this.startBtn.textContent = 'Sorting Complete';
+                this.startBtn.disabled = true;
+            }
+
+            render() {
+                this.container.innerHTML = '';
+                const maxHeight = 250;
+                const maxValue = Math.max(...this.sorter.array);
+
+                this.sorter.array.forEach((value, index) => {
+                    const bar = document.createElement('div');
+                    bar.className = 'array-bar';
+                    bar.style.height = `${(value / maxValue) * maxHeight}px`;
+                    
+                    if (this.sorter.comparing.includes(index)) {
+                        bar.classList.add('comparing');
+                    }
+                    if (this.sorter.sortedIndices.has(index)) {
+                        bar.classList.add('sorted');
+                    }
+                    
+                    this.container.appendChild(bar);
+                });
+
+                const progress = (this.sorter.sortedIndices.size / this.sorter.array.length) * 100;
+                this.progressDisplay.textContent = `${progress.toFixed(1)}%`;
+            }
+        }
+
+        // Initialize the application
+        new SortingVisualizer();
     </script>
 </body>
 </html>
